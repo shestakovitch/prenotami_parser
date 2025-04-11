@@ -1,34 +1,46 @@
-import os
-from dotenv import load_dotenv
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from config import base_url, salter_1_url, salter_2_url
 
-# Читаем переменные окружения
-load_dotenv()
-LOGIN = os.getenv("LOGIN")
-PASSWORD = os.getenv("PASSWORD")
+from checkers_and_funcs import random_sleep, check_login, check_popup, check_unavailable, login, check_salter
+from driver_setup import create_driver
+from logger_config import setup_logger
+
+logger = setup_logger(__name__)
 
 
 def main():
-    # Запускаем webdriver, переходим по ссылке base_url
-    driver = webdriver.Chrome() # если будешь запускать на домашнем компьютере - поменяй на Firefox
-    driver.get(url=base_url)
+    driver = create_driver()
+    logger.info("🚗 Драйвер создан")
 
-    # Вводим логин
-    email_element = driver.find_element(By.ID, value="login-email")
-    email_element.clear()
-    email_element.send_keys(LOGIN)
+    login(driver)
+    logger.info("🔐 Выполнен логин")
 
-    # Вводим пароль и нажимаем Enter
-    password_element = driver.find_element(By.ID, value="login-password")
-    password_element.clear()
-    password_element.send_keys(PASSWORD)
-    password_element.send_keys(Keys.RETURN)
+    if not check_unavailable(driver):
+        logger.info("Проверяем логин...")
+        if check_login(driver):
+            logger.info("✅ Логин успешен")
+        else:
+            logger.warning("⚠️ Логин, возможно, не удался")
 
-    #Переходим на страницу с записью
-    driver.get(url=salter_1_url)
+        random_sleep()
+
+        try:
+            driver.find_element(By.ID, value="advanced").send_keys(Keys.ENTER)
+            logger.info("➡️ Перешли на страницу с записью")
+        except Exception as e:
+            logger.error(f"❌ Ошибка при переходе: {e}")
+            driver.quit()
+            return
+
+        for salter_id in (1151, 1258):
+            logger.info(f"🔎 Проверяем слот: {salter_id}")
+            check_salter(driver, salter_id)
+    else:
+        logger.warning("🚫 Страница недоступна (unavailable)")
+
+    driver.quit()
+    logger.info("🛑 Драйвер закрыт")
+
 
 if __name__ == "__main__":
     main()

@@ -3,4 +3,6 @@ __pycache__
 .venv
 .idea
 .env
-
+log.txt
+slot.png
+unavailable.png
