@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from config import BASE_URL, LOGIN, PASSWORD
+from config import BASE_URL, LOGIN, PASSWORD, USER_NAME
 from telegram_sender import send_message, send_pic
 from logger_config import setup_logger
 
@@ -53,7 +53,7 @@ def check_login(driver):
     try:
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
-                (By.XPATH, "//figure[@class='main-nav__avatar']//figcaption[contains(text(), 'Anna Morozyuk')]"))
+                (By.XPATH, f"//figure[@class='main-nav__avatar']//figcaption[contains(text(), {USER_NAME})]"))
         )
         logger.info("✅ Успешный вход в систему!")
         return True
