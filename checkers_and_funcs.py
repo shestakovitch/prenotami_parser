@@ -105,8 +105,9 @@ def check_salter(driver, param, timeout=5):
 
         if not check_popup(driver):
             logger.info("🟢 Возможно, появился слот!")
+            driver.save_screenshot("slot.png")
             send_message(f"Возможно появился слот по этой ссылке {BASE_URL}/Services/Booking/{param}")
-            send_pic()
+            send_pic("slot.png")
     except TimeoutException:
         logger.warning(f"⏱️ Элемент {param} не найден за {timeout} секунд.")
     except Exception as e:

@@ -27,7 +27,7 @@ def send_message(message):
     })
 
 
-def send_pic(pic_path="slot.png"):
+def send_pic(pic_path):
     """
     Отправляет фото в Telegram.
     """
