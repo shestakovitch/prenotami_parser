@@ -53,7 +53,7 @@ def check_login(driver):
     try:
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
-                (By.XPATH, f"//figure[@class='main-nav__avatar']//figcaption[contains(text(), {USER_NAME})]"))
+                (By.XPATH, f"//figure[@class='main-nav__avatar']//figcaption[contains(text(), '{USER_NAME}')]"))
         )
         logger.info("✅ Успешный вход в систему!")
         return True
@@ -65,21 +65,31 @@ def check_login(driver):
         return False
 
 
-def check_popup(driver):
+def check_popup(driver, timeout=10):
     random_sleep()
     try:
-        popup = driver.find_element(
-            By.XPATH,
-            "//*[contains(text(), 'Sorry, all appointments for this service are currently booked')]"
+        # Ждём появления текста во всплывающем окне
+        popup = WebDriverWait(driver, timeout).until(
+            EC.presence_of_element_located((
+                By.XPATH,
+                "//*[contains(text(), 'Sorry, all appointments for this service are currently booked')]"
+            ))
         )
         logger.info("⚠️ Всплывающее окно найдено: %s", popup.text)
 
-        ok_button = driver.find_element(By.XPATH, "//button[text()='ok']")
+        # Ждём появления и кликабельности кнопки OK
+        ok_button = WebDriverWait(driver, timeout).until(
+            EC.element_to_be_clickable((By.XPATH, "//button[text()='ok']"))
+        )
         ok_button.click()
         return True
-    except NoSuchElementException:
+
+    except TimeoutException:
         driver.save_screenshot("slot.png")
         logger.info("✅ Всплывающее окно не появилось.")
+        return False
+    except Exception as e:
+        logger.error(f"Ошибка при проверке всплывающего окна: {e}")
         return False
 
 
