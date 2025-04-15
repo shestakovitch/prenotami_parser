@@ -32,7 +32,6 @@ def login(driver):
         password_element.send_keys(PASSWORD)
         password_element.send_keys(Keys.RETURN)
         random_sleep()
-        logger.info("Логин выполнен")
     except Exception as e:
         logger.error(f"Ошибка при логине: {e}")
 
@@ -40,8 +39,6 @@ def login(driver):
 def check_unavailable(driver):
     try:
         if "unavailable" in driver.page_source.lower():
-            driver.save_screenshot("unavailable.png")
-            logger.warning("⚠️ Страница недоступна (unavailable)")
             driver.quit()
             return True
     except Exception as e:
@@ -55,20 +52,28 @@ def check_login(driver):
             EC.presence_of_element_located(
                 (By.XPATH, f"//figure[@class='main-nav__avatar']//figcaption[contains(text(), '{USER_NAME}')]"))
         )
-        logger.info("✅ Успешный вход в систему!")
         return True
     except NoSuchElementException:
-        logger.warning("⚠️ Не удалось найти имя пользователя.")
         return False
     except TimeoutException:
         logger.warning("⏱️ Истекло время ожидания появления элемента логина.")
         return False
 
 
-def check_popup(driver, timeout=10):
+def go_to_services(driver):
+    try:
+        driver.find_element(By.ID, value="advanced").send_keys(Keys.ENTER)
+        logger.info("➡️ Перешли на страницу с записью")
+    except Exception as e:
+        logger.error(f"❌ Ошибка при переходе: {e}")
+        driver.quit()
+        return
+
+
+def check_popup_or_site_down(driver, timeout=10):
     random_sleep()
     try:
-        # Ждём появления текста во всплывающем окне
+        # Проверка на попап с сообщением об отсутствии слотов
         popup = WebDriverWait(driver, timeout).until(
             EC.presence_of_element_located((
                 By.XPATH,
@@ -77,7 +82,6 @@ def check_popup(driver, timeout=10):
         )
         logger.info("⚠️ Всплывающее окно найдено: %s", popup.text)
 
-        # Ждём появления и кликабельности кнопки OK
         ok_button = WebDriverWait(driver, timeout).until(
             EC.element_to_be_clickable((By.XPATH, "//button[text()='ok']"))
         )
@@ -85,11 +89,17 @@ def check_popup(driver, timeout=10):
         return True
 
     except TimeoutException:
-        driver.save_screenshot("slot.png")
-        logger.info("✅ Всплывающее окно не появилось.")
+        # Попап не появился — проверяем, не упал ли сайт
+        page_text = driver.page_source.lower()
+        for message in ("this site can’t be reached", "this site can't be reached", "runtime error"):
+            if message in page_text:
+                logger.error("🚫 Сайт недоступен: This site can't be reached")
+                driver.quit()
+                return True  # Считаем как критическую ошибку, аналогично попапу
+        logger.info("✅ Всплывающее окно не появилось и сайт доступен.")
         return False
     except Exception as e:
-        logger.error(f"Ошибка при проверке всплывающего окна: {e}")
+        logger.error(f"Ошибка при проверке всплывающего окна или доступности сайта: {e}")
         return False
 
 
@@ -103,7 +113,7 @@ def check_salter(driver, param, timeout=5):
         element.send_keys(Keys.ENTER)
         random_sleep()
 
-        if not check_popup(driver):
+        if not check_popup_or_site_down(driver):
             logger.info("🟢 Возможно, появился слот!")
             driver.save_screenshot("slot.png")
             send_message(f"Возможно появился слот по этой ссылке {BASE_URL}/Services/Booking/{param}")

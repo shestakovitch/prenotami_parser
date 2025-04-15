@@ -1,7 +1,4 @@
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-
-from checkers_and_funcs import random_sleep, check_login, check_popup, check_unavailable, login, check_salter
+from checkers_and_funcs import random_sleep, check_login, check_unavailable, login, go_to_services, check_salter
 from driver_setup import create_driver
 from logger_config import setup_logger
 
@@ -13,24 +10,19 @@ def main():
     logger.info("🚗 Драйвер создан")
 
     login(driver)
-    logger.info("🔐 Выполнен логин")
 
     if not check_unavailable(driver):
         logger.info("Проверяем логин...")
         if check_login(driver):
-            logger.info("✅ Логин успешен")
+            logger.info("🔐Логин выполнен")
         else:
-            logger.warning("⚠️ Логин, возможно, не удался")
+            logger.warning("⚠️ Не удалось найти имя пользователя.")
+            driver.quit()
+            logger.info("🛑 Драйвер закрыт")
+            return
 
         random_sleep()
-
-        try:
-            driver.find_element(By.ID, value="advanced").send_keys(Keys.ENTER)
-            logger.info("➡️ Перешли на страницу с записью")
-        except Exception as e:
-            logger.error(f"❌ Ошибка при переходе: {e}")
-            driver.quit()
-            return
+        go_to_services(driver)
 
         for salter_id in (1151, 1258):
             logger.info(f"🔎 Проверяем слот: {salter_id}")
