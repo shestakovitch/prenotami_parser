@@ -5,6 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains  # Импортируем для движения мыши
 
 from config import BASE_URL, LOGIN, PASSWORD, USER_NAME
 from telegram_sender import send_message, send_pic
@@ -17,11 +18,28 @@ def random_sleep(min_seconds=1, max_seconds=5):
     time.sleep(random.uniform(min_seconds, max_seconds))
 
 
+def scroll_page(driver):
+    """Функция для прокрутки страницы до конца"""
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    random_sleep()
+
+
+def move_mouse(driver):
+    """Функция для эмуляции движения мыши"""
+    actions = ActionChains(driver)
+    actions.move_to_element(driver.find_element(By.TAG_NAME, "body")).perform()
+    random_sleep()
+
+
 def login(driver):
     logger.info("Открываем сайт и выполняем логин")
     driver.get(url=BASE_URL)
 
     try:
+        # Прокручиваем страницу и эмулируем движение мыши
+        scroll_page(driver)
+        move_mouse(driver)
+
         email_element = driver.find_element(By.ID, value="login-email")
         email_element.clear()
         email_element.send_keys(LOGIN)
@@ -62,8 +80,13 @@ def check_login(driver):
 
 def go_to_services(driver):
     try:
+        # Прокручиваем страницу и эмулируем движение мыши
+        scroll_page(driver)
+        move_mouse(driver)
+
         driver.find_element(By.ID, value="advanced").send_keys(Keys.ENTER)
         logger.info("➡️ Перешли на страницу с записью")
+
     except Exception as e:
         logger.error(f"❌ Ошибка при переходе: {e}")
         driver.quit()
@@ -105,6 +128,10 @@ def check_popup_or_site_down(driver, timeout=10):
 
 def check_salter(driver, param, timeout=5):
     try:
+        # Прокручиваем страницу и эмулируем движение мыши
+        scroll_page(driver)
+        move_mouse(driver)
+
         logger.info(f"Проверка слота {param}...")
         selector = f'a[href="/Services/Booking/{param}"]'
         element = WebDriverWait(driver, timeout).until(

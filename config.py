@@ -11,4 +11,5 @@ CHAT_ID = os.getenv("CHAT_ID")
 USER_NAME = os.getenv("USER_NAME")
 
 BASE_URL = "https://prenotami.esteri.it"
+COOKIES_FILE = "cookies.json"
 
