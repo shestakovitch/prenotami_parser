@@ -1,5 +1,6 @@
 import time
 import random
+from pathlib import Path
 from selenium.common import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -143,6 +144,8 @@ def check_salter(driver, param, timeout=5):
         if not check_popup_or_site_down(driver):
             logger.info("🟢 Возможно, появился слот!")
             driver.save_screenshot("slot.png")
+            Path("slot.html").write_text(driver.page_source, encoding="utf-8")
+
             send_message(f"Возможно появился слот по этой ссылке {BASE_URL}/Services/Booking/{param}")
             send_pic("slot.png")
     except TimeoutException:
