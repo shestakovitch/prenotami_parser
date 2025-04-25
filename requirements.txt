@@ -9,7 +9,7 @@ charset-normalizer==3.4.1
 dotenv==0.9.9
 fake_user_agent==2.3.9
 frozenlist==1.5.0
-h11==0.14.0
+h11==0.16.0
 idna==3.10
 lxml==5.3.2
 multidict==6.3.2
