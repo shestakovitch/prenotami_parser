@@ -1,5 +1,7 @@
 import time
 import random
+import threading
+import sys
 from pathlib import Path
 from selenium.common import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.keys import Keys
@@ -148,6 +150,25 @@ def check_salter(driver, param, timeout=5):
 
             send_message(f"Возможно появился слот по этой ссылке {BASE_URL}/Services/Booking/{param}")
             send_pic("slot.png")
+
+            # Таймер на случай, если пользователь не закроет вручную
+            def auto_exit():
+                logger.warning("\n⏰ Время вышло. Скрипт завершает работу.")
+                sys.exit()
+
+            timer = threading.Timer(600, auto_exit)  # 10 минут
+            timer.start()
+
+            # Передача управления пользователю
+            try:
+                input("⏸ Слот найден. Управление передано пользователю. Нажмите Enter, чтобы завершить скрипт вручную раньше таймера...\n")
+                timer.cancel()
+                logger.info("✅ Скрипт завершён вручную.")
+                sys.exit()
+            except KeyboardInterrupt:
+                logger.warning("\n🚪 Принудительное завершение.")
+                sys.exit()
+
     except TimeoutException:
         logger.warning(f"⏱️ Элемент {param} не найден за {timeout} секунд.")
     except Exception as e:

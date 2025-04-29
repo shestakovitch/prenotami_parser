@@ -26,7 +26,10 @@ def main():
 
         for salter_id in (1151, 1258):
             logger.info(f"🔎 Проверяем слот: {salter_id}")
-            check_salter(driver, salter_id)
+            slot_found = check_salter(driver, salter_id)
+            if slot_found:
+                logger.info("⏸️ Слот найден — передаём управление пользователю.")
+                return  # <--- Завершаем main(), но драйвер остаётся активен
     else:
         logger.warning("🚫 Страница недоступна (unavailable)")
 
