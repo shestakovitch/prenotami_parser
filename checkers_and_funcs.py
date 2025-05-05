@@ -8,6 +8,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.action_chains import ActionChains  # Импортируем для движения мыши
 
 from config import BASE_URL, LOGIN, PASSWORD, USER_NAME
@@ -145,9 +146,65 @@ def check_salter(driver, param, timeout=5):
 
         if not check_popup_or_site_down(driver):
             logger.info("🟢 Возможно, появился слот!")
-            driver.save_screenshot("slot.png")
+
+            # 1. Выбор "Kolektivna rezervacija" по тексту label
+            label_booking = driver.find_element(By.XPATH, "//label[contains(text(), 'Vrsta rezervacije')]")
+            select_booking = label_booking.find_element(By.XPATH, "./following-sibling::select")
+            Select(select_booking).select_by_visible_text("Kolektivna rezervacija")
+
+            # Подождем, пока появится блок с выбором количества
+            time.sleep(1)
+
+            # 2. Выбор "1" в "Broj dodatnih podnosilaca zahteva"
+            label_companions = driver.find_element(By.XPATH,
+                                                   "//label[contains(text(), 'Broj dodatnih podnosilaca zahteva')]")
+            select_companions = label_companions.find_element(By.XPATH, "./following-sibling::select")
+            Select(select_companions).select_by_value("1")
+
+            # Drugo/a državljanstvo
+            input_citizenship = driver.find_element(By.ID, "DatiAddizionaliPrenotante_0___testo")
+            input_citizenship.clear()
+            input_citizenship.send_keys("Russia")
+
+            # Razlog Boravka
+            select_reason = Select(driver.find_element(By.ID, "ddls_1"))
+            select_reason.select_by_visible_text("Turizam")
+
+            # Adresa prebivališta
+            input_address = driver.find_element(By.ID, "DatiAddizionaliPrenotante_2___testo")
+            input_address.clear()
+            input_address.send_keys("Majke Jevrosime 45, 5")
+
+            # показать скрытые поля, если необходимо
+            driver.execute_script("document.getElementById('ifMultiple').style.display = 'block';")
+            driver.execute_script("document.getElementById('divCompanion_0').style.display = 'block';")
+
+            # заполнить фамилию, имя, дату рождения
+            driver.find_element(By.ID, "Accompagnatori_0__CognomeAccompagnatore").send_keys("Shestakov")
+            driver.find_element(By.ID, "Accompagnatori_0__NomeAccompagnatore").send_keys("Mikhail")
+            driver.find_element(By.ID, "Accompagnatori_0__DataNascitaAccompagnatore").send_keys("1986-12-29")
+
+            # выбрать "Srodstvo" = Supružnik
+            relation_select = Select(driver.find_element(By.ID, "ddlRelation_0"))
+            relation_select.select_by_visible_text("Supružnik")
+
+            # заполнить "Drugo/a državljanstvo"
+            driver.find_element(By.NAME, "Accompagnatori[0].DatiAddizionaliAccompagnatore[0]._testo").send_keys(
+                "Russia")
+
+            # выбрать "Razlog Boravka" = Turizam
+            razlog_select = Select(driver.find_element(By.ID, "ddlsAcc_1"))  # предполагаемый ID
+            razlog_select.select_by_visible_text("Turizam")
+
+            # заполнить "Adresa prebivališta"
+            driver.find_element(By.NAME, "Accompagnatori[0].DatiAddizionaliAccompagnatore[2]._testo").send_keys(
+                "Majke Jevrosime 45, 5")
+
+            otp_button = driver.find_element(By.ID, "otp-send").click()
+
             Path("slot.html").write_text(driver.page_source, encoding="utf-8")
 
+            driver.save_screenshot("slot.png")
             send_message(f"Возможно появился слот по этой ссылке {BASE_URL}/Services/Booking/{param}")
             send_pic("slot.png")
 
@@ -161,7 +218,8 @@ def check_salter(driver, param, timeout=5):
 
             # Передача управления пользователю
             try:
-                input("⏸ Слот найден. Управление передано пользователю. Нажмите Enter, чтобы завершить скрипт вручную раньше таймера...\n")
+                input(
+                    "⏸ Слот найден. Управление передано пользователю. Нажмите Enter, чтобы завершить скрипт вручную раньше таймера...\n")
                 timer.cancel()
                 logger.info("✅ Скрипт завершён вручную.")
                 sys.exit()
