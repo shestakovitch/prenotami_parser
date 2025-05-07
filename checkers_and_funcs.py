@@ -72,13 +72,19 @@ def login(driver):
 
 
 def check_unavailable_or_verification_error(driver):
+    """
+        Проверяет заголовок страницы и URL на наличие признаков ошибки.
+        При обнаружении логирует, завершает драйвер и возвращает True.
+        """
     try:
-        page = driver.page_source.lower()
-        for message in ("unavailable", "si è verificato un errore durante l'elaborazione della richiesta"):
-            if message in page:
-                logger.error(f"Обнаружена ошибка: {message}")
-                driver.quit()
-                return True
+        if "unavailable" in driver.title.lower():
+            logger.error(f"Обнаружена ошибка: unavailable")
+            driver.quit()
+            return True
+        if "error" in driver.current_url.lower():
+            logger.error(f"Обнаружена ошибка: An error occurred while processing the request")
+            driver.quit()
+            return True
     except Exception as e:
         logger.error(f"Ошибка при проверке доступности страницы: {e}")
     return False
@@ -134,7 +140,7 @@ def check_popup_or_site_down(driver, timeout=10):
     except TimeoutException:
         # Попап не появился — проверяем, не упал ли сайт
         page_text = driver.page_source.lower()
-        for message in ("this site can't be reached", "this site can't be reached", "runtime error"):
+        for message in ("this site can’t be reached", "this site can't be reached", "runtime error"):
             if message in page_text:
                 logger.error("🚫 Сайт недоступен: This site can't be reached")
                 driver.quit()
@@ -235,7 +241,8 @@ def check_salter(driver, param, timeout=5):
             # Передача управления пользователю
             try:
                 input(
-                    "⏸ Слот найден. Управление передано пользователю. Нажмите Enter, чтобы завершить скрипт вручную раньше таймера...\n")
+                    "⏸ Слот найден. Управление передано пользователю. Нажмите Enter, "
+                    "чтобы завершить скрипт вручную раньше таймера...\n")
                 timer.cancel()
                 logger.info("✅ Скрипт завершён вручную.")
                 sys.exit()
