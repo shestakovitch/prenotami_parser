@@ -35,27 +35,40 @@ def move_mouse(driver):
     random_sleep()
 
 
+def human_typing(element, text):
+    for char in text:
+        element.send_keys(char)
+        time.sleep(random.uniform(0.1, 0.3))
+
+
 def login(driver):
     logger.info("Открываем сайт и выполняем логин")
     driver.get(url=BASE_URL)
 
     try:
-        # Прокручиваем страницу и эмулируем движение мыши
         scroll_page(driver)
         move_mouse(driver)
 
+        # Клик по полю email мышью
         email_element = driver.find_element(By.ID, value="login-email")
-        email_element.clear()
-        email_element.send_keys(LOGIN)
-        random_sleep()
+        ActionChains(driver).move_to_element(email_element).click().perform()
+        human_typing(email_element, LOGIN)
+        random_sleep(1, 2)
 
+        # Клик по полю password мышью
         password_element = driver.find_element(By.ID, value="login-password")
-        password_element.clear()
-        password_element.send_keys(PASSWORD)
-        password_element.send_keys(Keys.RETURN)
-        random_sleep()
+        ActionChains(driver).move_to_element(password_element).click().perform()
+        human_typing(password_element, PASSWORD)
+        random_sleep(1, 2)
+
+        # Клик по кнопке входа мышью
+        login_button = driver.find_element(By.XPATH, "//button[@type='submit']")
+        ActionChains(driver).move_to_element(login_button).click().perform()
+        time.sleep(5)
+
     except Exception as e:
         logger.error(f"Ошибка при логине: {e}")
+        return False
 
 
 def check_unavailable(driver):
@@ -118,7 +131,7 @@ def check_popup_or_site_down(driver, timeout=10):
     except TimeoutException:
         # Попап не появился — проверяем, не упал ли сайт
         page_text = driver.page_source.lower()
-        for message in ("this site can’t be reached", "this site can't be reached", "runtime error"):
+        for message in ("this site can't be reached", "this site can't be reached", "runtime error"):
             if message in page_text:
                 logger.error("🚫 Сайт недоступен: This site can't be reached")
                 driver.quit()
