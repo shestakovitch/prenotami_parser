@@ -1,4 +1,5 @@
-from checkers_and_funcs import random_sleep, check_login, check_unavailable_or_verification_error, login, go_to_services, check_salter
+from checkers_and_funcs import random_sleep, check_login, check_unavailable_or_verification_error, login, \
+    go_to_services, check_salter
 from driver_setup import create_driver
 from logger_config import setup_logger
 
