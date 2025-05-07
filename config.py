@@ -10,6 +10,11 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 USER_NAME = os.getenv("USER_NAME")
 
+SECOND_PERSON_SURNAME=os.getenv("SECOND_PERSON_SURNAME")
+SECOND_PERSON_NAME=os.getenv("SECOND_PERSON_NAME")
+SECOND_PERSON_DOB=os.getenv("SECOND_PERSON_DOB")
+SECOND_PERSON_STATUS=os.getenv("SECOND_PERSON_STATUS")
+
 BASE_URL = "https://prenotami.esteri.it"
 COOKIES_FILE = "cookies.json"
 
