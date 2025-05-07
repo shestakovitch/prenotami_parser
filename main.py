@@ -1,4 +1,4 @@
-from checkers_and_funcs import random_sleep, check_login, check_unavailable, login, go_to_services, check_salter
+from checkers_and_funcs import random_sleep, check_login, check_unavailable_or_verification_error, login, go_to_services, check_salter
 from driver_setup import create_driver
 from logger_config import setup_logger
 
@@ -11,7 +11,7 @@ def main():
 
     login(driver)
 
-    if not check_unavailable(driver):
+    if not check_unavailable_or_verification_error(driver):
         logger.info("Проверяем логин...")
         if check_login(driver):
             logger.info("🔐Логин выполнен")
@@ -30,8 +30,6 @@ def main():
             if slot_found:
                 logger.info("⏸️ Слот найден — передаём управление пользователю.")
                 return  # <--- Завершаем main(), но драйвер остаётся активен
-    else:
-        logger.warning("🚫 Страница недоступна (unavailable)")
 
     driver.quit()
     logger.info("🛑 Драйвер закрыт")

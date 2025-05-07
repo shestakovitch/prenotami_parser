@@ -71,11 +71,14 @@ def login(driver):
         return False
 
 
-def check_unavailable(driver):
+def check_unavailable_or_verification_error(driver):
     try:
-        if "unavailable" in driver.page_source.lower():
-            driver.quit()
-            return True
+        page = driver.page_source.lower()
+        for message in ("unavailable", "si è verificato un errore durante l'elaborazione della richiesta"):
+            if message in page:
+                logger.error(f"Обнаружена ошибка: {message}")
+                driver.quit()
+                return True
     except Exception as e:
         logger.error(f"Ошибка при проверке доступности страницы: {e}")
     return False
