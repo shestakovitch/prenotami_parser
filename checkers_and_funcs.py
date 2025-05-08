@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.action_chains import ActionChains  # Импортируем для движения мыши
 
-from config import BASE_URL, LOGIN, PASSWORD, USER_NAME, SECOND_PERSON_SURNAME, SECOND_PERSON_NAME, \
+from config import BASE_URL, LOGIN, PASSWORD, USER_NAME, USER_ADDRESS, SECOND_PERSON_SURNAME, SECOND_PERSON_NAME, \
     SECOND_PERSON_ADDRESS, SECOND_PERSON_DOB, SECOND_PERSON_STATUS
 from telegram_sender import send_message, send_pic
 from logger_config import setup_logger
@@ -197,7 +197,7 @@ def check_salter(driver, param, timeout=5):
             # Adresa prebivališta
             input_address = driver.find_element(By.ID, "DatiAddizionaliPrenotante_2___testo")
             input_address.clear()
-            input_address.send_keys("Majke Jevrosime 45, 5")
+            input_address.send_keys(USER_ADDRESS)
 
             # показать скрытые поля, если необходимо
             driver.execute_script("document.getElementById('ifMultiple').style.display = 'block';")
