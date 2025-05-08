@@ -11,8 +11,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.action_chains import ActionChains  # Импортируем для движения мыши
 
-from config import BASE_URL, LOGIN, PASSWORD, USER_NAME, SECOND_PERSON_SURNAME, SECOND_PERSON_NAME, SECOND_PERSON_DOB, \
-    SECOND_PERSON_STATUS
+from config import BASE_URL, LOGIN, PASSWORD, USER_NAME, SECOND_PERSON_SURNAME, SECOND_PERSON_NAME, \
+    SECOND_PERSON_ADDRESS, SECOND_PERSON_DOB, SECOND_PERSON_STATUS
 from telegram_sender import send_message, send_pic
 from logger_config import setup_logger
 
@@ -84,6 +84,7 @@ def check_unavailable_or_verification_error(driver):
             return True
         if "error" in driver.current_url.lower():
             logger.error(f"Обнаружена ошибка: An error occurred while processing the request")
+            time.sleep(300)
             driver.quit()
             return True
     except Exception as e:
@@ -203,7 +204,7 @@ def check_salter(driver, param, timeout=5):
             driver.execute_script("document.getElementById('divCompanion_0').style.display = 'block';")
 
             # заполнить фамилию, имя, дату рождения
-            driver.find_element(By.ID, "Accompagnatori_0__CognomeAccompagnatore").send_keys(SECOND_PERSON_DOB)
+            driver.find_element(By.ID, "Accompagnatori_0__CognomeAccompagnatore").send_keys(SECOND_PERSON_SURNAME)
             driver.find_element(By.ID, "Accompagnatori_0__NomeAccompagnatore").send_keys(SECOND_PERSON_NAME)
             driver.find_element(By.ID, "Accompagnatori_0__DataNascitaAccompagnatore").send_keys(SECOND_PERSON_DOB)
 
@@ -221,7 +222,7 @@ def check_salter(driver, param, timeout=5):
 
             # заполнить "Adresa prebivališta"
             driver.find_element(By.NAME, "Accompagnatori[0].DatiAddizionaliAccompagnatore[2]._testo").send_keys(
-                "Majke Jevrosime 45, 5")
+                SECOND_PERSON_ADDRESS)
 
             otp_button = driver.find_element(By.ID, "otp-send").click()
 
