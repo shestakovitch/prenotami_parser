@@ -45,15 +45,16 @@ def human_typing(element, text):
 def login(driver):
     logger.info("Открываем сайт и выполняем логин")
     driver.get(url=BASE_URL)
-    time.sleep(3)
 
-    raw_cookie = "_pk_id.E1e0Ge2p6l.5f67=1de57a82bf5583a2.1743603417.; __RequestVerificationToken=3DT--fbLZSlvh5Q6bXzPKUufM6Vg8bLTwHfXBmk_p30eycdlH1zkVZ1mUWGUO-q7-aTeCi3HQItTKXcoY7SIojgS8VodETW85mt0ik3U-fY1; ASP.NET_SessionId=ssm0uvyptevkcdnwrknj1osx; _pk_ref.E1e0Ge2p6l.5f67=%5B%22%22%2C%22%22%2C1746802059%2C%22https%3A%2F%2Fambbelgrado.esteri.it%2F%22%5D; _pk_ses.E1e0Ge2p6l.5f67=1; Lyp1CWKh=A7JhhLWWAQAAhj_bY6rokVwrnubC8o7IxsOIEfIqqdkfUgtLUFG9ECWXEJP4AVd0pCmucrN5wH9eCOfvosJeCA==; _Culture=23; .cookie.=lb_rnXNfgRj2U7KNixgi48nWbt3a13RXcyuAjgGcEsH6U-ozGUESBLZWyMbOn3vBFCu9ga0mPRdZoto7_EvFHNqqKeeF1AkYJNenrJluQwzSEATq9McbLfv0ciqoj64Vpm8UbsUVQvUg82dCTzgQNPO5PXCIPvxAVZ493ArhLSxf4Fm3jWnbFaY-ATsm14dpOwxWSQngV7iVuARvAiVRzcbO0ll54MoIteJMKCLph2Tt2zDVU6zCftgWqtUOMvByT3UoONMPpAIJctG3cbYHdp2RHlQwmcAfB-5hNEtcQK8lovDX2jL_ZFlWVykkMfCZl2fADCBWmf-03orVtjN50Tr4godNLT9D7Oj1ZVhXNy5Tow7Vbs3f5A6we0hSmS7i07iZd0zOsuv2kSRj6sbUOq3loW1IoJFHSHGEbaAKLy7xy4Ae12t7QgqWCk40X74_VLBcs9nVxvIcyl8Wlryqdbv0hL-7mjFFsg0JXY8TDdNg7LUBWePR6TWt7bnWIgfM3IBmIZEJdMwZvv_q2Mc4oNr6SAVHYcq2BO9omc86udFHpWP3d4EEpEyC6zVYtqFP2Vl7HSUptscXq-g_NaiEtIqsVF8Y5YeyUJVI1VbpWsw; TS01a5ae52=01a6f07363753d50cfe3126835af179ee6ab3190a1fd2a7b48b534bad328126cab1f778c8cdeed718d5bcad525951ff2dffd9f040272c92cc16a69900421ed60ce0c2400dfefcff1fd7b62230c2b1828f1cf28b4ae501d0d5648cae7ad6ea5d4d7f56dc0b0082677cdcc95463b27fa8ccefa1df2da4ba0b7f5eb18a8b5b08233b3710ec329a96dbb5169a172b786d685293115e0fd686a5a249c12fa1ec1f68727568199f4; TS01a5ae52030=01574ed7516f8d6062c24a85c03b57b43fd78d9fa83d6b6944fd899b9e827808f15a1e35a757b5b71dedb858c75f012f0bc4978b9b; OClmoOot=A5W23PaVAQAADw_ANBqLwEs9cOpNQTjp9NXvEj1reoF_35mt2tc5NNkaQRQcAVd0oiuuckX5wH9eCOfvosJeCA|1|0|d93681c53d60568e110aaa9b77f95e1824c5398c; TS85ef4567027=085c4e0199ab20005c799fe80b8135deb754508e02bb2c7d3d37d92d7726a84310df35e2bd6501a708abe5d8f0113000770ef853557be6e8907e5fa799f800fe3ed860450677f9a9d14c296365bd56d7d3545985808ed43b0d296a4f436c84f4"
-
-    for cookie in raw_cookie.split("; "):
-        name, value = cookie.split("=", 1)
-        driver.add_cookie({"name": name.strip(), "value": value.strip()})
-
-    driver.refresh()
+    # time.sleep(3)
+    #
+    # raw_cookie = "_pk_id.E1e0Ge2p6l.5f67=1de57a82bf5583a2.1743603417.; __RequestVerificationToken=3DT--fbLZSlvh5Q6bXzPKUufM6Vg8bLTwHfXBmk_p30eycdlH1zkVZ1mUWGUO-q7-aTeCi3HQItTKXcoY7SIojgS8VodETW85mt0ik3U-fY1; ASP.NET_SessionId=ssm0uvyptevkcdnwrknj1osx; _pk_ref.E1e0Ge2p6l.5f67=%5B%22%22%2C%22%22%2C1746802059%2C%22https%3A%2F%2Fambbelgrado.esteri.it%2F%22%5D; _pk_ses.E1e0Ge2p6l.5f67=1; Lyp1CWKh=A7JhhLWWAQAAhj_bY6rokVwrnubC8o7IxsOIEfIqqdkfUgtLUFG9ECWXEJP4AVd0pCmucrN5wH9eCOfvosJeCA==; _Culture=23; .cookie.=lb_rnXNfgRj2U7KNixgi48nWbt3a13RXcyuAjgGcEsH6U-ozGUESBLZWyMbOn3vBFCu9ga0mPRdZoto7_EvFHNqqKeeF1AkYJNenrJluQwzSEATq9McbLfv0ciqoj64Vpm8UbsUVQvUg82dCTzgQNPO5PXCIPvxAVZ493ArhLSxf4Fm3jWnbFaY-ATsm14dpOwxWSQngV7iVuARvAiVRzcbO0ll54MoIteJMKCLph2Tt2zDVU6zCftgWqtUOMvByT3UoONMPpAIJctG3cbYHdp2RHlQwmcAfB-5hNEtcQK8lovDX2jL_ZFlWVykkMfCZl2fADCBWmf-03orVtjN50Tr4godNLT9D7Oj1ZVhXNy5Tow7Vbs3f5A6we0hSmS7i07iZd0zOsuv2kSRj6sbUOq3loW1IoJFHSHGEbaAKLy7xy4Ae12t7QgqWCk40X74_VLBcs9nVxvIcyl8Wlryqdbv0hL-7mjFFsg0JXY8TDdNg7LUBWePR6TWt7bnWIgfM3IBmIZEJdMwZvv_q2Mc4oNr6SAVHYcq2BO9omc86udFHpWP3d4EEpEyC6zVYtqFP2Vl7HSUptscXq-g_NaiEtIqsVF8Y5YeyUJVI1VbpWsw; TS01a5ae52=01a6f07363753d50cfe3126835af179ee6ab3190a1fd2a7b48b534bad328126cab1f778c8cdeed718d5bcad525951ff2dffd9f040272c92cc16a69900421ed60ce0c2400dfefcff1fd7b62230c2b1828f1cf28b4ae501d0d5648cae7ad6ea5d4d7f56dc0b0082677cdcc95463b27fa8ccefa1df2da4ba0b7f5eb18a8b5b08233b3710ec329a96dbb5169a172b786d685293115e0fd686a5a249c12fa1ec1f68727568199f4; TS01a5ae52030=01574ed7516f8d6062c24a85c03b57b43fd78d9fa83d6b6944fd899b9e827808f15a1e35a757b5b71dedb858c75f012f0bc4978b9b; OClmoOot=A5W23PaVAQAADw_ANBqLwEs9cOpNQTjp9NXvEj1reoF_35mt2tc5NNkaQRQcAVd0oiuuckX5wH9eCOfvosJeCA|1|0|d93681c53d60568e110aaa9b77f95e1824c5398c; TS85ef4567027=085c4e0199ab20005c799fe80b8135deb754508e02bb2c7d3d37d92d7726a84310df35e2bd6501a708abe5d8f0113000770ef853557be6e8907e5fa799f800fe3ed860450677f9a9d14c296365bd56d7d3545985808ed43b0d296a4f436c84f4"
+    #
+    # for cookie in raw_cookie.split("; "):
+    #     name, value = cookie.split("=", 1)
+    #     driver.add_cookie({"name": name.strip(), "value": value.strip()})
+    #
+    # driver.refresh()
 
     try:
         scroll_page(driver)
